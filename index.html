@@ -5,31 +5,52 @@
 
     <title>Juego de adivina tu número</title>
 
+    <!-- Agregamos el tipo JAVASCRIPT -->
+    <script type="text/javascript"></script>
+
+
+    <!-- Se hicieron modificaciones en cuanto a estilo -->
     <style>
       html {
-        font-family: sans-serif;
+        padding: 150px;
+        color: #000 ;
+        text-align: center;
       }
+
       body {
         width: 50%;
         max-width: 800px;
         min-width: 480px;
-        margin: 0 auto;
+        margin: auto;
+        border: #000;
+        font-family: cursive;
+
       }
       .lastResult {
-        color: white;
+        color: #000;
         padding: 3px;
+      }
+
+
+      .form {
+
+        padding: 10px;
+        font-family: cursive;
+
       }
     </style>
   </head>
 
   <body>
-      <h1>Juego Adivina tu número</h1>
+      <h1>Juego Adivina Tu Número</h1>
 
       <p>Hemos seleccionado un número aleatorío entre 1 a 100. Trata de adivinar el número, en un total de 10 turnos o menos. No te preocupes, te diremos sí el número es más alto o más bajo </p>
 
+
 <div class="form">
-  <label for="guessField">Ingresa el número a adivinar: </label><input type="text" id="guessField" class="guessField">
-  <input type="submit" value="Ingresar el número aleatorio" class="guessSubmit">
+  <label for="guessField"> <br>Ingresa el número a adivinar: <br> </label>
+  <input type="text" id="guessField" class="guessField">
+  <input type="submit" value="Evaluar" class="guessSubmit">
 </div>
 
 <div class="resultParas">
@@ -40,68 +61,119 @@
 
 </body>
 
-<script>
-  let randomNumber = Math.random() * 10;
 
-  const ATTEMPS = 5;
+
+
+
+<script>
+
+  // Reformulación de la formúla, la cual no estaba correcta ya que 
+  // tenía un rango solo de 10 numeros. 
+  let randomNumber = Math.round(Math.random() * 100) + 1;
+
+
+  //Cambio en el número de ATTEMPS, logrando los 10
+  const ATTEMPS = 10;
   const guesses = document.querySelector('.guesses');
   const lastResult = document.querySelector('.lastResult');
-  const lowOrHi = document.querySelector('lowOrHi');
+
+  //Se llamó exitosamente la clase lowOrHi, ya que no estaba siendo llamada
+  const lowOrHi = document.querySelector('.lowOrHi');
   const guessSubmit = document.querySelector('.guessSubmit');
   const guessField = document.querySelector('.guessField');
 
   let guessCount = 1;
   let resetButton;
 
+
+
+
   function checkGuess() {
 
-    let userGuess = guessField.value;
-    if(guessCount === 1) {
-      guesses.textContent = 'Número aleatorio anterior: ';
-    }
-    guesses.textContent += userGuess + ' ';
+    //Cambio en la descripción así como en el color de fondo. 
+    let userGuess = Number(guessField.value);
+    if( guessCount === 1 ) {
+      guesses.textContent = 'REGISTRO DE NÚMEROS: ';
+      guesses.style.backgroundColor = "silver";
 
+    }
+
+    guesses.textContent += userGuess + ', ';
+
+
+    //Cambio en la descripción, ya que el mensaje era: PERDISTE
     if(userGuess === randomNumber) {
-      lastResult.textContent = '!!!Pérdistes!!!';
-      lastResult.style.backgroundColor = 'black';
+      lastResult.textContent = `¡¡¡Felicitaciones, ${userGuess} es el numero correcto!!!`;
+      lastResult.style.backgroundColor = 'lime';
       lowOrHi.textContent = '';
       setGameOver();
-    } else if(guessCount === ATTEMPS) {
-      lastResult.textContent = 'Felicitaciones! adivinaste el número!';
-      lastResult.style.backgroundColor = 'red';
-      setGameOver();
-    } else {
-      lastResult.textContent = 'Incorrecto! ';
-      lastResult.style.backgroundColor = 'green';
-      if(userGuess < randomNumber) {
-        lowOrHi.textContent = 'El número es mayor!';
-      } else if(userGuess > randomNumber) {
-        lowOrHi.textContent = 'El número es menor!';
-      }
-    }
 
+
+      //Arreglar la validación, ya que aquí nos decía que habíamos ADIVINADO
+      //pero su validación era incorrecta, ya que aquí validamos los intentos. 
+      //también el color se encontraba fuera de lo que se solicita.
+    } else if(guessCount === ATTEMPS) {
+      lastResult.textContent = `¡Perdiste!,
+      El número correcto era ${randomNumber}`;
+      setGameOver();
+
+    } else {
+      lastResult.textContent = '¡Incorrecto! ';
+      lastResult.style.backgroundColor = 'red';
+
+
+      //Se agregó userGuess la variable para mostrar en el mensaje el número introducido
+      //Además, se arregló el mensaje, ya que nos decía que era MAYOR
+      if(userGuess < randomNumber) {
+        lowOrHi.textContent = `¡El número ${userGuess} es MENOR!`;
+        
+
+      //Se agregó concatenó la variable para mostrar en el mensaje el número introducido
+      //Además, se arregló el mensaje, ya que nos decía que era MENOR.
+      } else if(userGuess > randomNumber) {
+        lowOrHi.textContent = `¡El número ${userGuess} es MAYOR!`;
+        
+
+      } 
+
+
+    }
+      
     guessCount++;
     guessField.value = '';
     guessField.focus();
-  }
-  guessSubmit.addeventListener('click', checkGuess);
 
+  }
+
+
+  //Escribimos correctamente el código, ya que no estaba escrito adecuadamente. 
+  guessSubmit.addEventListener('click', checkGuess);
+
+
+
+  //Modificación del botón de NUEVO JUEGO, con otro método que nos permite refrezcar la página
   function setGameOver() {
 	  guessField.disabled = true;
 	  guessSubmit.disabled = true;
 	  resetButton = document.createElement('button');
-	  resetButton.textContent = 'Comienza un nuevo juego';
+	  resetButton.textContent = 'NUEVO JUEGO';
 	  document.body.appendChild(resetButton);
-	  resetButton.addeventListener('click', resetGame);
+	  resetButton.addEventListener('click', _ => {
+      location.reload();
+    }) ;
   }
+
+
 
   function resetGame() {
 	  guessCount = 1;
 
 	  const resetParas = document.querySelectorAll('.resultParas p');
-	  for(let i = 0; i < resetParas.length; i++) {
+	  for (i = 0; i < resetParas.length; i++) {
 		  resetParas[i].textContent = '';
 	  }
+
+
 	  resetButton.parentNode.removeChild(resetButton);
 
 	  guessField.disabled = false;
@@ -111,7 +183,14 @@
 
 	  lastResult.style.backgroundColor = 'white';
 
-	  randomNumber = Math.floor(Math.random()) + 1;
+
+    //Modificación de la formula nuevamente.
+	  randomNumber = Math.round(Math.random() * 100) + 1;
   }
+
+  console.log(randomNumber);
+  console.log(resetGame);
+
+
 </script>
 </html>
